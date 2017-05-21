@@ -8,6 +8,9 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
 
+find_package(Threads)
+SET(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11 -pthread -lpthread -Wl,--no-as-needed")
+
 add_message_files(
     DIRECTORY msg
     FILES
@@ -73,7 +76,7 @@ add_executable(led_show
 
 add_library( led_demo SHARED ${untitled_SRCS} ${UIS} ${RSCS} ${TRS} ${MOCS} )
 
-target_link_libraries( led_demo  ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${catkin_LIBRARIES})
+target_link_libraries( led_demo  ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${catkin_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 target_link_libraries(led_show led_demo)
 

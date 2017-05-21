@@ -35,8 +35,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->_ch_z2, SIGNAL(clicked(bool)), this, SLOT(_ch_z2_clicked(bool)));
     connect(ui->_ch_z3, SIGNAL(clicked(bool)), this, SLOT(_ch_z3_clicked(bool)));
     connect(ui->_ch_z4, SIGNAL(clicked(bool)), this, SLOT(_ch_z4_clicked(bool)));
-
-
 }
 
 MainWindow::~MainWindow()
@@ -360,4 +358,61 @@ void MainWindow::_ch_z4_clicked(bool checked)
         _sel_z4 = true;
     else
         _sel_z4 = false;
+}
+
+void MainWindow::on__combo1_activated(const QString &arg1)
+{
+    _selected_arduino = arg1.toUtf8().constData();
+}
+
+
+void MainWindow::on__bu_detect_clicked()
+{
+    bool first = true;
+    ui->_combo1->clear();
+    for(int i = 0; i < 255; i++)
+    {
+        std::string test = "/sys/class/tty/ttyACM";
+        test.append(std::to_string(i));
+        if(QDir(test.c_str()).exists())
+        {
+            std::string temp = "ttyACM";
+            temp.append(std::to_string(i));
+            ui->_combo1->addItem(temp.c_str());
+
+            if(first)
+            {
+                _selected_arduino = temp;
+                first = false;
+            }
+        }
+    }
+}
+
+void MainWindow::on__bu_connect_clicked()
+{
+    if(_connected.size() != 0)
+    {
+        for(unsigned int i = 0; i < _connected.size(); i++)
+        {
+            if(_connected.at(i) == _selected_arduino)
+            {
+                ui->_out1->setText("Already Connected");
+                return;
+
+            }
+        }
+    }
+    python_load.clear();
+    python_load = "python /home/denis/catkin_ws/src/rosserial/rosserial_python/nodes/serial_node.py _port:=/dev/";
+    python_load = python_load + _selected_arduino;
+    python_load.append(" _baud:=115200 &");
+
+    std::string str = "connecting to arduino on port: \n";
+    str = str + _selected_arduino;
+    ui->_out1->setText(str.c_str());
+
+    system(python_load.c_str());
+
+    _connected.push_back(_selected_arduino);
 }

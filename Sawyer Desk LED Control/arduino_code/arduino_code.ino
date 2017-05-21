@@ -256,11 +256,15 @@ ros::NodeHandle  nh;
 zone *zones;
 
 void messageCb( const led_demo::led& toggle_msg){
-  if(toggle_msg.zone_length > 1)
-  return;
   
   for(int i = 0; i < toggle_msg.zone_length; i++)
   {
+    
+    if(toggle_msg.zone[i] > 1)
+    {
+      continue;
+    }
+    
     zones[toggle_msg.zone[i] - 1].set_rgb(toggle_msg.rgb[0], toggle_msg.rgb[1], toggle_msg.rgb[2]);
     zones[toggle_msg.zone[i] - 1].set_blink(toggle_msg.blink, toggle_msg.rate);
     zones[toggle_msg.zone[i] - 1].set_self_control(toggle_msg.self_control); 
