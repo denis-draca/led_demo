@@ -15,6 +15,12 @@ MainWindow::MainWindow(QWidget *parent) :
     _sel_z3 = false;
     _sel_z4 = false;
 
+    _sel_table1 = false;
+    _sel_table2 = false;
+
+    _connected = false;
+    _detected = false;
+
     ui->_ch_z1->setCheckable(true);
     ui->_ch_z2->setCheckable(true);
     ui->_ch_z3->setCheckable(true);
@@ -39,11 +45,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    kill(-pid, SIGKILL);
     delete ui;
 }
 
 void MainWindow::_bu_blink_clicked()
 {
+    if(!_connected)
+    {
+        ui->_out1->setText("No connection has been established");
+        return;
+    }
     std::string r = ui->_in_r->text().toUtf8().constData();
     std::string g = ui->_in_g->text().toUtf8().constData();
     std::string b = ui->_in_b->text().toUtf8().constData();
@@ -124,6 +136,11 @@ void MainWindow::_bu_blink_clicked()
 
 void MainWindow::_bu_breath_clicked()
 {
+    if(!_connected)
+    {
+        ui->_out1->setText("No connection has been established");
+        return;
+    }
     std::string r = ui->_in_r->text().toUtf8().constData();
     std::string g = ui->_in_g->text().toUtf8().constData();
     std::string b = ui->_in_b->text().toUtf8().constData();
@@ -203,6 +220,11 @@ void MainWindow::_bu_breath_clicked()
 
 void MainWindow::_bu_set_colour_clicked()
 {
+    if(!_connected)
+    {
+        ui->_out1->setText("No connection has been established");
+        return;
+    }
     std::string r = ui->_in_r->text().toUtf8().constData();
     std::string g = ui->_in_g->text().toUtf8().constData();
     std::string b = ui->_in_b->text().toUtf8().constData();
@@ -270,6 +292,11 @@ void MainWindow::_bu_set_colour_clicked()
 
 void MainWindow::_bu_set_zoff_clicked()
 {
+    if(!_connected)
+    {
+        ui->_out1->setText("No connection has been established");
+        return;
+    }
     if(!_sel_z1 && !_sel_z2 && !_sel_z3 && !_sel_z4)
     {
         ui->_out1->setText("no zones have been selected");
@@ -311,6 +338,11 @@ void MainWindow::_bu_set_zoff_clicked()
 
 void MainWindow::_bu_set_OFF_clicked()
 {
+    if(!_connected)
+    {
+        ui->_out1->setText("No connection has been established");
+        return;
+    }
     ui->_out1->setText("all zones will shut off");
     led_demo::led led_msg;
     led_msg.zone.push_back(1);
@@ -376,6 +408,7 @@ void MainWindow::on__bu_detect_clicked()
         test.append(std::to_string(i));
         if(QDir(test.c_str()).exists())
         {
+            _detected = true;
             std::string temp = "ttyACM";
             temp.append(std::to_string(i));
             ui->_combo1->addItem(temp.c_str());
@@ -387,32 +420,71 @@ void MainWindow::on__bu_detect_clicked()
             }
         }
     }
+
+    if(!_detected)
+    {
+        ui->_out1->setText("No connected arduino's detected");
+    }
 }
 
 void MainWindow::on__bu_connect_clicked()
 {
-    if(_connected.size() != 0)
+    if(!_detected)
     {
-        for(unsigned int i = 0; i < _connected.size(); i++)
-        {
-            if(_connected.at(i) == _selected_arduino)
-            {
-                ui->_out1->setText("Already Connected");
-                return;
-
-            }
-        }
+        ui->_out1->setText("Please detect available arduino's first");
+        return;
     }
+    if(_connected)
+    {
+        ui->_out1->setText("Already connected. Please disconect before connecting to a different lighting system");
+        return;
+    }
+
     python_load.clear();
     python_load = "python /home/denis/catkin_ws/src/rosserial/rosserial_python/nodes/serial_node.py _port:=/dev/";
     python_load = python_load + _selected_arduino;
-    python_load.append(" _baud:=115200 &");
+    python_load.append(" _baud:=115200");
 
     std::string str = "connecting to arduino on port: \n";
     str = str + _selected_arduino;
     ui->_out1->setText(str.c_str());
 
-    system(python_load.c_str());
+    pid = fork();
+    if(pid == 0)
+    {
+        setpgid(getpid(), getpid());
+        system(python_load.c_str());
+    }
 
-    _connected.push_back(_selected_arduino);
+    _connected = true;
+}
+
+void MainWindow::on__bu_disconnect_clicked()
+{
+    if(!_connected)
+    {
+        ui->_out1->setText("Nothing to disconnect");
+        return;
+    }
+    ui->_out1->setText("Connection being terminated");
+    kill(-pid, SIGKILL);
+    ui->_out1->setText("Connection Terminated");
+
+    _connected = false;
+}
+
+void MainWindow::on__ch_table1_clicked(bool checked)
+{
+    if(checked)
+        _sel_table1 = true;
+    else
+        _sel_table1 = false;
+}
+
+void MainWindow::on__ch_table2_clicked(bool checked)
+{
+    if(checked)
+        _sel_table2 = true;
+    else
+        _sel_table2 = false;
 }

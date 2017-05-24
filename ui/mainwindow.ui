@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>480</height>
+    <width>642</width>
+    <height>474</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -299,13 +299,55 @@
      <string>Connect</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="_bu_disconnect">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>220</y>
+      <width>161</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Turns off all zones&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string>DISCONNECT</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="_ch_table1">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>120</y>
+      <width>97</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Table 1</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="_ch_table2">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>150</y>
+      <width>97</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Table 2</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>640</width>
+     <width>642</width>
      <height>25</height>
     </rect>
    </property>

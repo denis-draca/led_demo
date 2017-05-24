@@ -12,6 +12,7 @@
 #include <QDir>
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
 
 namespace Ui {
 class MainWindow;
@@ -33,12 +34,19 @@ private:
     bool _sel_z3;
     bool _sel_z4;
 
+    bool _sel_table1;
+    bool _sel_table2;
+
+    bool _connected;
+    bool _detected;
+
     ros::NodeHandle _n;
     ros::Publisher _pub;
 
     std::string _selected_arduino;
     std::string python_load;
-    std::vector<std::string> _connected;
+
+    pid_t pid;
 
 private:
     void new_thread();
@@ -59,6 +67,11 @@ private slots:
     void on__combo1_activated(const QString &arg1);
     void on__bu_detect_clicked();
     void on__bu_connect_clicked();
+    void on__bu_disconnect_clicked();
+    void on__ch_table1_clicked(bool checked);
+
+
+    void on__ch_table2_clicked(bool checked);
 };
 
 #endif // MAINWINDOW_H
