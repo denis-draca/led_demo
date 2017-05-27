@@ -5,7 +5,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    _pub = _n.advertise<led_demo::led>("/chat_test",1);
+    _pub_base1 = _n.advertise<led_demo::led>("/sawyer/base/1", 1);
+    _pub_base2 = _n.advertise<led_demo::led>("/sawyer/base/2", 1);
 
     ui->setupUi(this);
     this->setWindowTitle("LED Demo");
@@ -19,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _sel_table2 = false;
 
     _connected = false;
+    _connected_2 = false;
     _detected = false;
 
     ui->_ch_z1->setCheckable(true);
@@ -51,11 +53,31 @@ MainWindow::~MainWindow()
 
 void MainWindow::_bu_blink_clicked()
 {
-    if(!_connected)
+    if(!_connected && !_connected_2)
     {
         ui->_out1->setText("No connection has been established");
         return;
     }
+
+    if(!_sel_table1 && !_sel_table2)
+    {
+        ui->_out1->setText("Select which table you want to set");
+        return;
+    }
+
+
+    if(!_connected && _sel_table1)
+    {
+        ui->_out1->setText("table 1 is not connected. Cancelling Operation");
+        return;
+    }
+
+    if(!_connected_2 && _sel_table2)
+    {
+        ui->_out1->setText("table 2 is not connected. Cancelling Operation");
+        return;
+    }
+
     std::string r = ui->_in_r->text().toUtf8().constData();
     std::string g = ui->_in_g->text().toUtf8().constData();
     std::string b = ui->_in_b->text().toUtf8().constData();
@@ -130,17 +152,40 @@ void MainWindow::_bu_blink_clicked()
     led_msg.rate = std::stoi(rate);
     led_msg.blink = true;
 
-    _pub.publish(led_msg);
+    if(_sel_table1)
+        _pub_base1.publish(led_msg);
 
+    if(_sel_table2)
+        _pub_base2.publish(led_msg);
 }
 
 void MainWindow::_bu_breath_clicked()
 {
-    if(!_connected)
+    if(!_connected && !_connected_2)
     {
         ui->_out1->setText("No connection has been established");
         return;
     }
+
+    if(!_sel_table1 && !_sel_table2)
+    {
+        ui->_out1->setText("Select which table you want to set");
+        return;
+    }
+
+
+    if(!_connected && _sel_table1)
+    {
+        ui->_out1->setText("table 1 is not connected. Cancelling Operation");
+        return;
+    }
+
+    if(!_connected_2 && _sel_table2)
+    {
+        ui->_out1->setText("table 2 is not connected. Cancelling Operation");
+        return;
+    }
+
     std::string r = ui->_in_r->text().toUtf8().constData();
     std::string g = ui->_in_g->text().toUtf8().constData();
     std::string b = ui->_in_b->text().toUtf8().constData();
@@ -212,19 +257,44 @@ void MainWindow::_bu_breath_clicked()
     led_msg.rgb.push_back(std::stoi(r));
     led_msg.rgb.push_back(std::stoi(g));
     led_msg.rgb.push_back(std::stoi(b));
+    led_msg.rgb.push_back(0);
     led_msg.rate = std::stoi(rate);
     led_msg.blink = false;
 
-    _pub.publish(led_msg);
+    if(_sel_table1)
+        _pub_base1.publish(led_msg);
+
+    if(_sel_table2)
+        _pub_base2.publish(led_msg);
 }
 
 void MainWindow::_bu_set_colour_clicked()
 {
-    if(!_connected)
+    if(!_connected && !_connected_2)
     {
         ui->_out1->setText("No connection has been established");
         return;
     }
+
+    if(!_sel_table1 && !_sel_table2)
+    {
+        ui->_out1->setText("Select which table you want to set");
+        return;
+    }
+
+
+    if(!_connected && _sel_table1)
+    {
+        ui->_out1->setText("table 1 is not connected. Cancelling Operation");
+        return;
+    }
+
+    if(!_connected_2 && _sel_table2)
+    {
+        ui->_out1->setText("table 2 is not connected. Cancelling Operation");
+        return;
+    }
+
     std::string r = ui->_in_r->text().toUtf8().constData();
     std::string g = ui->_in_g->text().toUtf8().constData();
     std::string b = ui->_in_b->text().toUtf8().constData();
@@ -287,16 +357,40 @@ void MainWindow::_bu_set_colour_clicked()
     led_msg.rgb.push_back(std::stoi(b));
     led_msg.blink = false;
 
-    _pub.publish(led_msg);
+    if(_sel_table1)
+        _pub_base1.publish(led_msg);
+
+    if(_sel_table2)
+        _pub_base2.publish(led_msg);
 }
 
 void MainWindow::_bu_set_zoff_clicked()
 {
-    if(!_connected)
+    if(!_connected && !_connected_2)
     {
         ui->_out1->setText("No connection has been established");
         return;
     }
+
+    if(!_sel_table1 && !_sel_table2)
+    {
+        ui->_out1->setText("Select which table you want to set");
+        return;
+    }
+
+
+    if(!_connected && _sel_table1)
+    {
+        ui->_out1->setText("table 1 is not connected. Cancelling Operation");
+        return;
+    }
+
+    if(!_connected_2 && _sel_table2)
+    {
+        ui->_out1->setText("table 2 is not connected. Cancelling Operation");
+        return;
+    }
+
     if(!_sel_z1 && !_sel_z2 && !_sel_z3 && !_sel_z4)
     {
         ui->_out1->setText("no zones have been selected");
@@ -333,17 +427,22 @@ void MainWindow::_bu_set_zoff_clicked()
     ui->_out1->setText(display.c_str());
 
     led_msg.ON = false;
-    _pub.publish(led_msg);
+
+    if(_sel_table1)
+        _pub_base1.publish(led_msg);
+
+    if(_sel_table2)
+        _pub_base2.publish(led_msg);
 }
 
 void MainWindow::_bu_set_OFF_clicked()
 {
-    if(!_connected)
+    if(!_connected && !_connected_2)
     {
         ui->_out1->setText("No connection has been established");
         return;
     }
-    ui->_out1->setText("all zones will shut off");
+    ui->_out1->setText("all connected zones will shut off");
     led_demo::led led_msg;
     led_msg.zone.push_back(1);
     led_msg.zone.push_back(2);
@@ -351,7 +450,11 @@ void MainWindow::_bu_set_OFF_clicked()
     led_msg.zone.push_back(4);
     led_msg.ON = false;
 
-    _pub.publish(led_msg);
+    if(_connected)
+        _pub_base1.publish(led_msg);
+
+    if(_connected_2)
+        _pub_base2.publish(led_msg);
 }
 
 void MainWindow::_ch_z1_clicked(bool checked)
@@ -397,7 +500,6 @@ void MainWindow::on__combo1_activated(const QString &arg1)
     _selected_arduino = arg1.toUtf8().constData();
 }
 
-
 void MainWindow::on__bu_detect_clicked()
 {
     bool first = true;
@@ -434,10 +536,13 @@ void MainWindow::on__bu_connect_clicked()
         ui->_out1->setText("Please detect available arduino's first");
         return;
     }
-    if(_connected)
+    for(unsigned int i = 0; i < _connected_arduino.size(); i++)
     {
-        ui->_out1->setText("Already connected. Please disconect before connecting to a different lighting system");
-        return;
+        if(_connected_arduino.at(i) == _selected_arduino)
+        {
+            ui->_out1->setText("Already connected. Either disconnect current base to use same port or attach other base to different USB port");
+            return;
+        }
     }
 
     python_load.clear();
@@ -449,28 +554,58 @@ void MainWindow::on__bu_connect_clicked()
     str = str + _selected_arduino;
     ui->_out1->setText(str.c_str());
 
-    pid = fork();
-    if(pid == 0)
+    _connected_arduino.push_back(_selected_arduino);
+
+    if(!_connected)
     {
-        setpgid(getpid(), getpid());
-        system(python_load.c_str());
+        pid = fork();
+        if(pid == 0)
+        {
+            setpgid(getpid(), getpid());
+            system(python_load.c_str());
+        }
+
+        _connected = true;
+    }
+    else if(!_connected_2)
+    {
+        pid_2 = fork();
+        if(pid_2 == 0)
+        {
+            setpgid(getpid(), getpid());
+            system(python_load.c_str());
+        }
+
+        _connected_2 = true;
     }
 
-    _connected = true;
 }
 
 void MainWindow::on__bu_disconnect_clicked()
 {
-    if(!_connected)
+    if(!_connected && !_connected_2)
     {
         ui->_out1->setText("Nothing to disconnect");
         return;
     }
-    ui->_out1->setText("Connection being terminated");
-    kill(-pid, SIGKILL);
+
+
+    if(_connected)
+    {
+        kill(-pid, SIGKILL);
+    }
+
+    if(_connected_2)
+    {
+        kill(-pid_2, SIGKILL);
+    }
     ui->_out1->setText("Connection Terminated");
 
+    ROS_INFO("CONNECTION HAS BEEN KILLED");
     _connected = false;
+    _connected_2 = false;
+
+    _connected_arduino.clear();
 }
 
 void MainWindow::on__ch_table1_clicked(bool checked)
@@ -487,4 +622,113 @@ void MainWindow::on__ch_table2_clicked(bool checked)
         _sel_table2 = true;
     else
         _sel_table2 = false;
+}
+
+void MainWindow::on__bu_breath_rndRGB_clicked()
+{
+    if(!_connected && !_connected_2)
+    {
+        ui->_out1->setText("No connection has been established");
+        return;
+    }
+
+    if(!_sel_table1 && !_sel_table2)
+    {
+        ui->_out1->setText("Select which table you want to set");
+        return;
+    }
+
+
+    if(!_connected && _sel_table1)
+    {
+        ui->_out1->setText("table 1 is not connected. Cancelling Operation");
+        return;
+    }
+
+    if(!_connected_2 && _sel_table2)
+    {
+        ui->_out1->setText("table 2 is not connected. Cancelling Operation");
+        return;
+    }
+
+    std::string r = ui->_in_r->text().toUtf8().constData();
+    std::string g = ui->_in_g->text().toUtf8().constData();
+    std::string b = ui->_in_b->text().toUtf8().constData();
+    std::string rate = ui->_in_rate->text().toUtf8().constData();
+
+    if(r.empty())
+    {
+        ui->_out1->setText("Please select R value");
+        return;
+    }
+    else if(g.empty())
+    {
+        ui->_out1->setText("Please select G value");
+        return;
+    }
+    else if(b.empty())
+    {
+        ui->_out1->setText("Please select B value");
+        return;
+    }
+    else if(rate.empty())
+    {
+        ui->_out1->setText("Please select rate of change");
+        return;
+    }
+
+    if(!_sel_z1 && !_sel_z2 && !_sel_z3 && !_sel_z4)
+    {
+        ui->_out1->setText("no zones have been selected");
+        return;
+    }
+
+    led_demo::led led_msg;
+    std::string display = "Following Zones Will now Pulse at given rate: \n";
+
+    if (_sel_z1)
+    {
+        display.append("Zone 1 \n");
+        led_msg.zone.push_back(1);
+    }
+
+    if (_sel_z2)
+    {
+        display.append("Zone 2 \n");
+        led_msg.zone.push_back(2);
+    }
+
+    if (_sel_z3)
+    {
+        display.append("Zone 3 \n");
+        led_msg.zone.push_back(3);
+    }
+
+    if (_sel_z4)
+    {
+        display.append("Zone 4 \n");
+        led_msg.zone.push_back(4);
+    }
+
+    display.append("Given rate of change: ");
+
+    display.append(rate);
+    display.append("ms \n");
+
+    ui->_out1->setText(display.c_str());
+
+    led_msg.ON = true;
+    led_msg.self_control = false;
+    led_msg.rgb.push_back(std::stoi(r));
+    led_msg.rgb.push_back(std::stoi(g));
+    led_msg.rgb.push_back(std::stoi(b));
+    led_msg.rgb.push_back(1);
+    led_msg.rate = std::stoi(rate);
+    led_msg.blink = false;
+
+    if(_sel_table1)
+        _pub_base1.publish(led_msg);
+
+    if(_sel_table2)
+        _pub_base2.publish(led_msg);
 }

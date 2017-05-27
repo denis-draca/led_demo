@@ -12,7 +12,7 @@ class zone
 {
  public:
    zone(int pin_R, int pin_G, int pin_B);
-   void set_rgb(int r, int g, int b);
+   void set_rgb(int r, int g, int b, int rnd);
    void set_blink(boolean yes, int rate_ms);
    void set_self_control(boolean yes);
    void set_on(boolean yes);
@@ -34,6 +34,9 @@ class zone
    int _rate;
    boolean _sub_off;
    boolean flag;
+   
+   boolean _rand_colour;
+   boolean _switch;
    
    byte _r;
    byte _g;
@@ -77,6 +80,7 @@ zone::zone(int pin_R, int pin_G, int pin_B)
    _self_control = false;
    
    first = true;
+   _rand_colour = false;
    
 }
 
@@ -85,11 +89,21 @@ void zone::set_on(boolean yes)
   _ON = yes;
 }  
 
-void zone::set_rgb(int r, int g, int b)
+void zone::set_rgb(int r, int g, int b, int rnd)
 {
    _r = r;
    _g = g;
    _b = b; 
+   
+   if(rnd == 1)
+   {
+     _rand_colour = true;
+     _switch = false;
+   }
+   else
+   {
+     _rand_colour = false;
+   }
    
    rgb2hsv();
 }
@@ -147,6 +161,11 @@ void zone::perform_task()
          {
            if (time > (_rate/40) && !flag)
            {
+             if(_rand_colour && _switch)
+             {
+               set_rgb(random(255), random(255), random(255), 1);
+               _switch = false;
+             }
              if(first)
              {
                 _v = 0.0;
@@ -171,6 +190,7 @@ void zone::perform_task()
              if (_v <= (float)0)
              {
                flag = false;
+               _switch = true;
              }
              
              hsv2rgb();
@@ -265,14 +285,18 @@ void messageCb( const led_demo::led& toggle_msg){
       continue;
     }
     
-    zones[toggle_msg.zone[i] - 1].set_rgb(toggle_msg.rgb[0], toggle_msg.rgb[1], toggle_msg.rgb[2]);
+    if(toggle_msg.rgb_length != 4)
+    {
+      break;
+    }
+    zones[toggle_msg.zone[i] - 1].set_rgb(toggle_msg.rgb[0], toggle_msg.rgb[1], toggle_msg.rgb[2], toggle_msg.rgb[3]);
     zones[toggle_msg.zone[i] - 1].set_blink(toggle_msg.blink, toggle_msg.rate);
     zones[toggle_msg.zone[i] - 1].set_self_control(toggle_msg.self_control); 
     zones[toggle_msg.zone[i] - 1].set_on(toggle_msg.ON);
   }
 }
 
-ros::Subscriber<led_demo::led> sub("/chat_test", &messageCb );
+ros::Subscriber<led_demo::led> sub("/sawyer/base/1", &messageCb );
 
 void setup()
 { 
@@ -281,6 +305,8 @@ void setup()
   nh.getHardware()->setBaud(115200);
   nh.initNode();
   nh.subscribe(sub);
+  
+  randomSeed(analogRead(0));
   
 }
 

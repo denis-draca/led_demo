@@ -38,16 +38,20 @@ private:
     bool _sel_table2;
 
     bool _connected;
+    bool _connected_2;
     bool _detected;
 
     ros::NodeHandle _n;
-    ros::Publisher _pub;
+    ros::Publisher _pub_base1;
+    ros::Publisher _pub_base2;
 
     std::string _selected_arduino;
     std::string python_load;
 
     pid_t pid;
+    pid_t pid_2;
 
+    std::vector<std::string> _connected_arduino;
 private:
     void new_thread();
 
@@ -72,6 +76,7 @@ private slots:
 
 
     void on__ch_table2_clicked(bool checked);
+    void on__bu_breath_rndRGB_clicked();
 };
 
 #endif // MAINWINDOW_H
