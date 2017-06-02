@@ -149,6 +149,7 @@ void MainWindow::_bu_blink_clicked()
     led_msg.rgb.push_back(std::stoi(r));
     led_msg.rgb.push_back(std::stoi(g));
     led_msg.rgb.push_back(std::stoi(b));
+    led_msg.rgb.push_back(0);
     led_msg.rate = std::stoi(rate);
     led_msg.blink = true;
 
@@ -355,6 +356,7 @@ void MainWindow::_bu_set_colour_clicked()
     led_msg.rgb.push_back(std::stoi(r));
     led_msg.rgb.push_back(std::stoi(g));
     led_msg.rgb.push_back(std::stoi(b));
+    led_msg.rgb.push_back(0);
     led_msg.blink = false;
 
     if(_sel_table1)
