@@ -52,6 +52,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     timer->start(100);
     timer2->start();
+
+    _connected_arduino.resize(2);
+
 }
 
 MainWindow::~MainWindow()
@@ -67,19 +70,31 @@ void MainWindow::new_thread()
     bool new_detect = false;
     bool first = true;
 
-    if(!_detected)
-        ui->_combo1->clear();
-
     for(int i = 0; i < 255; i++)
     {
         std::string test = "/sys/class/tty/ttyACM";
         test.append(std::to_string(i));
         if(QDir(test.c_str()).exists())
         {
-            new_detect = true;
             std::string temp = "ttyACM";
             temp.append(std::to_string(i));
-            ui->_combo1->addItem(temp.c_str());
+
+            bool present = false;
+
+            for(int index = 0; index < ui->_combo1->count(); index++)
+            {
+                if(ui->_combo1->itemText(index).toUtf8().constData() == temp)
+                {
+                    present = true;
+                }
+            }
+
+            if(!present)
+            {
+               ui->_combo1->addItem(temp.c_str());
+            }
+
+            new_detect = true;
 
             if(first)
             {
@@ -89,43 +104,50 @@ void MainWindow::new_thread()
         }
     }
 
+    if(!new_detect)
+    {
+        ui->_combo1->clear();
+    }
+
     _detected = new_detect;
 }
 
 void MainWindow::safety_thread()
 {
     int status = 0;
+    int status2 = 0;
+
     pid_t w;
+    pid_t w2;
 
     w = waitpid(pid, &status, WNOHANG);
-
-    std::cout << "STATUS: ***********" << status << " W: *********" << w << std::endl;
+    w2 = waitpid(pid_2, &status2, WNOHANG);
 
     if(_connected)
     {
-        std::string test = "/sys/class/tty/";
-        test = test + _connected_arduino.at(0);
-        if(!QDir(test.c_str()).exists())
+        if(w != 0)
         {
             kill(-pid, SIGKILL);
             ui->_out1->setText("lost connection with table 1");
-        }
 
-        _connected = false;
+            _connected = false;
+
+            _connected_arduino.at(0).clear();
+        }
 
     }
 
     if(_connected_2)
     {
-        std::string test = "/sys/class/tty/";
-        test = test + _connected_arduino.at(1);
-        if(!QDir(test.c_str()).exists())
+        if(w2 != 0)
         {
             kill(-pid_2, SIGKILL);
             ui->_out1->setText("lost connection with table 2");
-        }
 
-        _connected_2 = false;
+            _connected_2 = false;
+
+            _connected_arduino.at(1).clear();
+        }
     }
 }
 
@@ -605,8 +627,6 @@ void MainWindow::on__bu_connect_clicked()
     str = str + _selected_arduino;
     ui->_out1->setText(str.c_str());
 
-    _connected_arduino.push_back(_selected_arduino);
-
     if(!_connected)
     {
         pid = fork();
@@ -615,6 +635,8 @@ void MainWindow::on__bu_connect_clicked()
             setpgid(getpid(), getpid());
             system(python_load.c_str());
         }
+
+        _connected_arduino.at(0) = _selected_arduino;
 
         _connected = true;
     }
@@ -627,6 +649,7 @@ void MainWindow::on__bu_connect_clicked()
             system(python_load.c_str());
         }
 
+        _connected_arduino.at(1) = _selected_arduino;
         _connected_2 = true;
     }
 
@@ -656,7 +679,8 @@ void MainWindow::on__bu_disconnect_clicked()
     _connected = false;
     _connected_2 = false;
 
-    _connected_arduino.clear();
+    _connected_arduino.at(0).clear();
+    _connected_arduino.at(1).clear();
 }
 
 void MainWindow::on__ch_table1_clicked(bool checked)

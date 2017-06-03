@@ -81,7 +81,6 @@ private slots:
     void on__bu_breath_rndRGB_clicked();
     void new_thread();
     void safety_thread();
-
 };
 
 #endif // MAINWINDOW_H
