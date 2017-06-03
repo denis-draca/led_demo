@@ -43,12 +43,90 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->_ch_z2, SIGNAL(clicked(bool)), this, SLOT(_ch_z2_clicked(bool)));
     connect(ui->_ch_z3, SIGNAL(clicked(bool)), this, SLOT(_ch_z3_clicked(bool)));
     connect(ui->_ch_z4, SIGNAL(clicked(bool)), this, SLOT(_ch_z4_clicked(bool)));
+
+    timer = new QTimer(this);
+    timer2 = new QTimer(this);
+
+    connect(timer, SIGNAL(timeout()), this, SLOT(new_thread()));
+    connect(timer2, SIGNAL(timeout()), this, SLOT(safety_thread()));
+
+    timer->start(100);
+    timer2->start();
 }
 
 MainWindow::~MainWindow()
 {
     kill(-pid, SIGKILL);
+    kill(-pid_2, SIGKILL);
+
     delete ui;
+}
+
+void MainWindow::new_thread()
+{
+    bool new_detect = false;
+    bool first = true;
+
+    if(!_detected)
+        ui->_combo1->clear();
+
+    for(int i = 0; i < 255; i++)
+    {
+        std::string test = "/sys/class/tty/ttyACM";
+        test.append(std::to_string(i));
+        if(QDir(test.c_str()).exists())
+        {
+            new_detect = true;
+            std::string temp = "ttyACM";
+            temp.append(std::to_string(i));
+            ui->_combo1->addItem(temp.c_str());
+
+            if(first)
+            {
+                _selected_arduino = temp;
+                first = false;
+            }
+        }
+    }
+
+    _detected = new_detect;
+}
+
+void MainWindow::safety_thread()
+{
+    int status = 0;
+    pid_t w;
+
+    w = waitpid(pid, &status, WNOHANG);
+
+    std::cout << "STATUS: ***********" << status << " W: *********" << w << std::endl;
+
+    if(_connected)
+    {
+        std::string test = "/sys/class/tty/";
+        test = test + _connected_arduino.at(0);
+        if(!QDir(test.c_str()).exists())
+        {
+            kill(-pid, SIGKILL);
+            ui->_out1->setText("lost connection with table 1");
+        }
+
+        _connected = false;
+
+    }
+
+    if(_connected_2)
+    {
+        std::string test = "/sys/class/tty/";
+        test = test + _connected_arduino.at(1);
+        if(!QDir(test.c_str()).exists())
+        {
+            kill(-pid_2, SIGKILL);
+            ui->_out1->setText("lost connection with table 2");
+        }
+
+        _connected_2 = false;
+    }
 }
 
 void MainWindow::_bu_blink_clicked()
@@ -502,40 +580,11 @@ void MainWindow::on__combo1_activated(const QString &arg1)
     _selected_arduino = arg1.toUtf8().constData();
 }
 
-void MainWindow::on__bu_detect_clicked()
-{
-    bool first = true;
-    ui->_combo1->clear();
-    for(int i = 0; i < 255; i++)
-    {
-        std::string test = "/sys/class/tty/ttyACM";
-        test.append(std::to_string(i));
-        if(QDir(test.c_str()).exists())
-        {
-            _detected = true;
-            std::string temp = "ttyACM";
-            temp.append(std::to_string(i));
-            ui->_combo1->addItem(temp.c_str());
-
-            if(first)
-            {
-                _selected_arduino = temp;
-                first = false;
-            }
-        }
-    }
-
-    if(!_detected)
-    {
-        ui->_out1->setText("No connected arduino's detected");
-    }
-}
-
 void MainWindow::on__bu_connect_clicked()
 {
     if(!_detected)
     {
-        ui->_out1->setText("Please detect available arduino's first");
+        ui->_out1->setText("No Detected tables found");
         return;
     }
     for(unsigned int i = 0; i < _connected_arduino.size(); i++)

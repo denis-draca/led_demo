@@ -13,6 +13,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <QTimer>
+#include <sys/wait.h>
 
 namespace Ui {
 class MainWindow;
@@ -52,8 +54,10 @@ private:
     pid_t pid_2;
 
     std::vector<std::string> _connected_arduino;
+    QTimer *timer;
+    QTimer *timer2;
+
 private:
-    void new_thread();
 
 
 private slots:
@@ -69,14 +73,15 @@ private slots:
     void _ch_z4_clicked(bool checked);
 
     void on__combo1_activated(const QString &arg1);
-    void on__bu_detect_clicked();
     void on__bu_connect_clicked();
     void on__bu_disconnect_clicked();
     void on__ch_table1_clicked(bool checked);
 
-
     void on__ch_table2_clicked(bool checked);
     void on__bu_breath_rndRGB_clicked();
+    void new_thread();
+    void safety_thread();
+
 };
 
 #endif // MAINWINDOW_H
