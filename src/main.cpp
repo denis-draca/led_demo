@@ -7,6 +7,7 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "wallpusher_listener");
 
     QApplication app(argc, argv);
+    Q_INIT_RESOURCE(caslogo);
 
     MainWindow main;
 
