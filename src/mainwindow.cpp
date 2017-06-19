@@ -530,6 +530,11 @@ void MainWindow::_bu_set_zoff_clicked()
 
     led_msg.ON = false;
 
+    led_msg.rgb.push_back(0);
+    led_msg.rgb.push_back(0);
+    led_msg.rgb.push_back(0);
+    led_msg.rgb.push_back(0);
+
     if(_sel_table1)
         _pub_base1.publish(led_msg);
 
@@ -550,6 +555,12 @@ void MainWindow::_bu_set_OFF_clicked()
     led_msg.zone.push_back(2);
     led_msg.zone.push_back(3);
     led_msg.zone.push_back(4);
+
+    led_msg.rgb.push_back(0);
+    led_msg.rgb.push_back(0);
+    led_msg.rgb.push_back(0);
+    led_msg.rgb.push_back(0);
+
     led_msg.ON = false;
 
     if(_connected)
