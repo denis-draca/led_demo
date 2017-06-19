@@ -257,32 +257,6 @@
      <string>ALL ZONE'S OFF</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="_combo1">
-    <property name="geometry">
-     <rect>
-      <x>120</x>
-      <y>40</y>
-      <width>151</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="_bu_connect">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>40</y>
-      <width>99</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Connect to selected arduino&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-    </property>
-    <property name="text">
-     <string>Connect</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="_bu_disconnect">
     <property name="geometry">
      <rect>
@@ -377,19 +351,6 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="label_7">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>10</y>
-      <width>201</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Connect to Base</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
@@ -448,22 +409,96 @@
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>600</y>
-      <width>411</width>
-      <height>161</height>
+      <x>60</x>
+      <y>620</y>
+      <width>521</width>
+      <height>121</height>
      </rect>
-    </property>
-    <property name="cursor">
-     <cursorShape>UpArrowCursor</cursorShape>
     </property>
     <property name="text">
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>cas</pixmap>
+     <pixmap resource="../resources/caslogo.qrc">:/testfile/cas</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
     </property>
    </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>219</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Connect to Base</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="_bu_connect">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>91</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Connect to selected arduino&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <property name="text">
+     <string>Connect</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="_combo1">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>40</y>
+      <width>151</width>
+      <height>27</height>
+     </rect>
+    </property>
+   </widget>
+   <zorder>_ch_z1</zorder>
+   <zorder>_ch_z2</zorder>
+   <zorder>_ch_z3</zorder>
+   <zorder>_ch_z4</zorder>
+   <zorder>_bu_blink</zorder>
+   <zorder>_bu_breath</zorder>
+   <zorder>_bu_set_colour</zorder>
+   <zorder>_out1</zorder>
+   <zorder>label</zorder>
+   <zorder>label_2</zorder>
+   <zorder>label_3</zorder>
+   <zorder>_in_r</zorder>
+   <zorder>_in_g</zorder>
+   <zorder>_in_b</zorder>
+   <zorder>_in_rate</zorder>
+   <zorder>label_4</zorder>
+   <zorder>_bu_zone_off</zorder>
+   <zorder>_bu_all_off</zorder>
+   <zorder>_bu_disconnect</zorder>
+   <zorder>_ch_table1</zorder>
+   <zorder>_ch_table2</zorder>
+   <zorder>line</zorder>
+   <zorder>label_5</zorder>
+   <zorder>label_6</zorder>
+   <zorder>line_2</zorder>
+   <zorder>label_8</zorder>
+   <zorder>label_9</zorder>
+   <zorder>label_10</zorder>
+   <zorder>_bu_breath_rndRGB</zorder>
+   <zorder>label_11</zorder>
+   <zorder>label_7</zorder>
+   <zorder>label_7</zorder>
+   <zorder>label_7</zorder>
+   <zorder>_bu_connect</zorder>
+   <zorder>_combo1</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -483,6 +518,8 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resources/caslogo.qrc"/>
+ </resources>
  <connections/>
 </ui>

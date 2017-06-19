@@ -15,6 +15,11 @@
 #include <signal.h>
 #include <QTimer>
 #include <sys/wait.h>
+#include <QPixmap>
+#include <fstream>
+#include <QFile>
+#include <QTextStream>
+#include <QDebug>
 
 namespace Ui {
 class MainWindow;

@@ -59,8 +59,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    kill(-pid, SIGKILL);
-    kill(-pid_2, SIGKILL);
+    if(_connected)
+        kill(-pid, SIGKILL);
+
+    if(_connected_2)
+        kill(-pid_2, SIGKILL);
 
     delete ui;
 }
@@ -350,7 +353,6 @@ void MainWindow::_bu_breath_clicked()
 
     display.append(rate);
     display.append("ms \n");
-
     ui->_out1->setText(display.c_str());
 
     led_msg.ON = true;
