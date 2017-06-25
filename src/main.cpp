@@ -6,14 +6,22 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "wallpusher_listener");
 
-    QApplication app(argc, argv);
-    Q_INIT_RESOURCE(caslogo);
+    try
+    {
 
-    MainWindow main;
+        QApplication app(argc, argv);
+        Q_INIT_RESOURCE(caslogo);
 
-    main.show();
+        MainWindow main;
 
-    app.exec();
+        main.show();
+
+        app.exec();
+    }
+    catch(const std::exception &e)
+    {
+        std::cout <<"FAILED TO START: " << e.what() << std::endl;
+    }
 
     return 0;
 }

@@ -55,6 +55,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     _connected_arduino.resize(2);
 
+    std::cout << "checking ros" << std::endl;
+
+    if(!ros::ok())
+    {
+        throw std::invalid_argument("ros not on");
+    }
+
 }
 
 MainWindow::~MainWindow()
